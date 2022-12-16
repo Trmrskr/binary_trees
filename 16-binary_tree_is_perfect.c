@@ -22,21 +22,68 @@ size_t binary_tree_height(const binary_tree_t *tree)
 	return (left_height > right_height ? left_height : right_height);
 }
 
-int has_binary_children(const binary_tree_t *tree)
+/**
+ * binary_tree_size - calculates the size of a binary tree
+ * @tree: the tree whose size is to be calculated
+ * Return: the size of the given tree
+ */
+
+size_t binary_tree_size(const binary_tree_t *tree)
 {
 	if (!tree)
 		return (0);
-	if (!tree->left && !tree->right)
+
+	return (binary_tree_size(tree->right) + binary_tree_size(tree->left) + 1);
+}
+
+/**
+ * size_is_balanced - check if tree size is balanced
+ * @tree: the tree to be checked
+ * Return: 1 if true, 0 if false
+ */
+
+int size_is_balanced(const binary_tree_t *tree)
+{
+	size_t size_r_subtree, size_l_subtree;
+
+	if (!tree)
+		return (0);
+
+	size_l_subtree = binary_tree_size(tree->left);
+	size_r_subtree = binary_tree_size(tree->right);
+
+	if (size_l_subtree != size_r_subtree)
+		return (0);
+	return (1);
+}
+
+/**
+ * has_binary_children - checks if a node has two children
+ * @node: the node to check
+ * Return: 1 if it has, 0 otherwise
+ */
+
+int has_binary_children(const binary_tree_t *node)
+{
+	if (!node)
+		return (0);
+	if (!node->left && !node->right)
 		return (1);
-	else if (tree->left && tree->right)
+	else if (node->left && node->right)
 		return (1);
 	else
 		return (0);
 
-	return (has_binary_children(tree->left) && has_binary_children(tree->right));
+	return (has_binary_children(node->left) && has_binary_children(node->right));
 }
 
-int tree_is_balanced(const binary_tree_t *tree)
+/**
+ * height_is_balanced - check if tree is balanced by height
+ * @tree: the tree to be checked
+ * Return: 1 if height is balanced, 0 otherwise
+ */
+
+int height_is_balanced(const binary_tree_t *tree)
 {
 	size_t right_height, left_height;
 	int height_diff;
@@ -54,10 +101,21 @@ int tree_is_balanced(const binary_tree_t *tree)
 	return (1);
 }
 
+/**
+ * binary_tree_is_perfect - checks if the tree passed as argument is perfect.
+ * I observed that a perfect binary tree satisfy all of the following properties.
+ * Each node has two children.
+ * Left and right subtree has a balanced factor of zero i.e. equal heights.
+ * Left and right subtree has equal size. Thus the following implementation
+ * @tree: the tree to be checked
+ * Return: 1 if perfect or 0 otherwise.
+ */
+
 int binary_tree_is_perfect(const binary_tree_t *tree)
 {
 	int binary_children = has_binary_children(tree);
-	int tree_is_balance = tree_is_balanced(tree);
+	int height_is_balance = height_is_balanced(tree);
+	int size_is_balance = size_is_balanced(tree);
 
-	return (binary_children && tree_is_balance);
+	return (binary_children && height_is_balance && size_is_balance);
 }
